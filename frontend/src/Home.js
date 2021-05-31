@@ -6,7 +6,6 @@ import { Jumbotron, Button } from 'reactstrap';
 import { useHistory  } from 'react-router-dom';
 //import "~bootstrap/scss/bootstrap";
 
-
 function Home() {
   let history = useHistory();
 
