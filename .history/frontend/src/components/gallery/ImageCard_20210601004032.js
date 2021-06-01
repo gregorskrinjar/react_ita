@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ImageCard({ selectedImg, setSelectedImg }) {
-  //const { docs } = useFirestore("images");
+  const { docs } = useFirestore("images");
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(-1);
   const [commentImg, setCommentImg] = useState(null);
@@ -59,52 +59,77 @@ function ImageCard({ selectedImg, setSelectedImg }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    projectFirestore
+    var first = projectFirestore
       .collection("images")
       .orderBy("createdAt", "desc")
-      .limit(3)
-      .get()
-      .then((collections) => {
-        const isCollectionEmpty = collections.size === 0;
-        if (!isCollectionEmpty) {
-          const imgs = collections.docs.map((img) => img.data());
-          const lastDoc = collections.docs[collections.docs.length - 1];
-          setImages(imgs);
-          console.log(images, "je not");
-          setLastDocs(lastDoc);
-          setLoading(false);
-        }
-      });
+      .limit(3);
+
+    return first.get().then((documentSnapshots) => {
+      // Get the last visible document
+      var lastVisible =
+        documentSnapshots.docs[documentSnapshots.docs.length - 1];
+      console.log("last", lastVisible);
+
+      // Construct a new query starting at this document,
+      // get the next 25 cities.
+      var next = projectFirestore
+        .collection("images")
+        .orderBy("createdAt")
+        .limit(3);
+
+      if (isCollectionEmpty) {
+        let documents = [];
+        documentSnapshots.forEach((doc) => {
+          documents.push({ ...doc.data(), id: doc.id });
+        }); // gre skozi kolekcijo v trenutnem casu
+        setImages(documents);
+        setLastDocs(lastVisible);
+        setLoading(false)
+      }
+    });
   }, []);
 
   const fetchImages = () => {
     setLoading(true);
-    projectFirestore
+    var first = projectFirestore
       .collection("images")
       .orderBy("createdAt", "desc")
-      .startAfter(lastDocs)
-      .limit(3)
-      .get()
-      .then((collections) => {
-        const isCollectionEmpty = collections.size === 0;
-        if (!isCollectionEmpty) {
-          const imgs = collections.docs.map((img) => img.data());
-          const lastDoc = collections.docs[collections.docs.length - 1];
-          setImages((images) => [...images, ...imgs]);
-          setLastDocs(lastDoc);
-          setLoading(false);
-        }
-      });
+      .limit(3);
+
+    return first.get().then((documentSnapshots) => {
+      // Get the last visible document
+      var lastVisible =
+        documentSnapshots.docs[documentSnapshots.docs.length - 1];
+      console.log("last", lastVisible);
+
+      // Construct a new query starting at this document,
+      // get the next 25 cities.
+      var next = projectFirestore
+        .collection("images")
+        .orderBy("createdAt")
+        .startAfter(lastDocs)
+        .limit(3);
+
+      if (isCollectionEmpty) {
+        let documents = [];
+        documentSnapshots.forEach((doc) => {
+          documents.push({ ...doc.data(), id: doc.id });
+        }); // gre skozi kolekcijo v trenutnem casu
+        setImages((images) => [...images, ...documents]);
+        setLastDocs(lastVisible);
+        setLoading(false)
+      }
+    });
   };
-  console.log(images.length);
+
   const handleExpandClick = (i) => {
     setExpanded(expanded === i ? -1 : i);
   };
 
   return (
     <div>
-      {images &&
-        images.map((doc, i) => (
+      {docs &&
+        docs.map((doc, i) => (
           <Grid item className={classes.root}>
             <Card>
               <CardHeader
@@ -162,7 +187,7 @@ function ImageCard({ selectedImg, setSelectedImg }) {
             </Card>
           </Grid>
         ))}
-      {!loading && <div className="load-more"><Button onClick={fetchImages}>Poglej več slik</Button></div>}
+        {loading && <Button onClick={fetchImages}>DODAJ</Button>}
     </div>
   );
 }

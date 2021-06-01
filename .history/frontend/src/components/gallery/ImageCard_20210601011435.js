@@ -162,7 +162,7 @@ function ImageCard({ selectedImg, setSelectedImg }) {
             </Card>
           </Grid>
         ))}
-      {!loading && <div className="load-more"><Button onClick={fetchImages}>Poglej več slik</Button></div>}
+      {!loading && <Button className="load-more" onClick={fetchImages}>DODAJ</Button>}
     </div>
   );
 }

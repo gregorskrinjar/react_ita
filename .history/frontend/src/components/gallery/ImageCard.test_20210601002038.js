@@ -27,7 +27,7 @@ describe("<ImageCard/>", () => {
   });
   it("shows div", () => {
     const wrapper = shallow(<ImageCard />);
-    expect(wrapper.find("div").length).toBe(2);
+    expect(wrapper.find("div").length).toBe(1);
   });
   // it("shows Grid", () => {
   //   const wrapper = mount(<ImageCard docs={true} />);

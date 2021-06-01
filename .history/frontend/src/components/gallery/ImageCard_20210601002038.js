@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import useFirestore from "../../hooks/useFirestore";
 import { motion } from "framer-motion";
 import { makeStyles } from "@material-ui/core/styles";
@@ -18,16 +18,15 @@ import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
 import Commentar from "../comments/Comment";
-import { projectFirestore } from "../../firebase/config";
-import { Button } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: 20,
     "&:last-child": {
-      paddingBottom: 10,
-    },
+      paddingBottom: 10
+    }
   },
   media: {
     height: 0,
@@ -46,65 +45,23 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
+  
 }));
 
 function ImageCard({ selectedImg, setSelectedImg }) {
-  //const { docs } = useFirestore("images");
+  const { docs } = useFirestore("images");
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(-1);
   const [commentImg, setCommentImg] = useState(null);
 
-  const [lastDocs, setLastDocs] = useState();
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    projectFirestore
-      .collection("images")
-      .orderBy("createdAt", "desc")
-      .limit(3)
-      .get()
-      .then((collections) => {
-        const isCollectionEmpty = collections.size === 0;
-        if (!isCollectionEmpty) {
-          const imgs = collections.docs.map((img) => img.data());
-          const lastDoc = collections.docs[collections.docs.length - 1];
-          setImages(imgs);
-          console.log(images, "je not");
-          setLastDocs(lastDoc);
-          setLoading(false);
-        }
-      });
-  }, []);
-
-  const fetchImages = () => {
-    setLoading(true);
-    projectFirestore
-      .collection("images")
-      .orderBy("createdAt", "desc")
-      .startAfter(lastDocs)
-      .limit(3)
-      .get()
-      .then((collections) => {
-        const isCollectionEmpty = collections.size === 0;
-        if (!isCollectionEmpty) {
-          const imgs = collections.docs.map((img) => img.data());
-          const lastDoc = collections.docs[collections.docs.length - 1];
-          setImages((images) => [...images, ...imgs]);
-          setLastDocs(lastDoc);
-          setLoading(false);
-        }
-      });
-  };
-  console.log(images.length);
   const handleExpandClick = (i) => {
     setExpanded(expanded === i ? -1 : i);
   };
 
   return (
     <div>
-      {images &&
-        images.map((doc, i) => (
+      {docs &&
+        docs.map((doc, i) => (
           <Grid item className={classes.root}>
             <Card>
               <CardHeader
@@ -162,7 +119,6 @@ function ImageCard({ selectedImg, setSelectedImg }) {
             </Card>
           </Grid>
         ))}
-      {!loading && <div className="load-more"><Button onClick={fetchImages}>Poglej več slik</Button></div>}
     </div>
   );
 }
