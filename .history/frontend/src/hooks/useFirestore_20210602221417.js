@@ -20,14 +20,13 @@ const useFirestore = (collection) => {
           }); // gre skozi kolekcijo v trenutnem casu
           const lastDoc = snap.docs[snap.docs.length - 1];
           setDocs(documents);
-          setLastDocs(lastDoc);
           setLoading(false);
         }
       });
     return () => unsub(); // ko ne uporabljamo več se odjavimo
   }, [collection]);
 
-  return { docs, setDocs, loading, setLoading, lastDocs, setLastDocs };
+  return { docs, setDocs, loading, setLoading };
 };
 
 export default useFirestore;

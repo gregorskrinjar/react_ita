@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useFirestore from "../../hooks/useFirestore";
+import { motion } from "framer-motion";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -59,6 +60,25 @@ function ImageCard({ selectedImg, setSelectedImg }) {
   // const [images, setImages] = useState([]);
   // const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    projectFirestore
+      .collection("images")
+      .orderBy("createdAt", "desc")
+      .limit(3)
+      .get()
+      .then((collections) => {
+        const isCollectionEmpty = collections.size === 0;
+        if (!isCollectionEmpty) {
+          const imgs = collections.docs.map((img) => img.data());
+          const lastDoc = collections.docs[collections.docs.length - 1];
+          //setImages(imgs);
+          console.log(docs, "je not");
+          setLastDocs(lastDoc);
+          setLoading(false);
+        }
+      });
+  }, []);
+
   const fetchImages = () => {
     setLoading(true);
     projectFirestore
@@ -71,7 +91,7 @@ function ImageCard({ selectedImg, setSelectedImg }) {
         let documents = [];
         const isCollectionEmpty = collections.size === 0;
         if (!isCollectionEmpty) {
-          //const imgs = collections.docs.map((img) => img.data());
+          const imgs = collections.docs.map((img) => img.data());
           collections.forEach((doc) => {
             documents.push({ ...doc.data(), id: doc.id });
           }); // gre skozi kolekcijo v trenutnem casu

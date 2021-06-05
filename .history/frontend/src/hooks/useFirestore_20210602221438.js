@@ -27,7 +27,7 @@ const useFirestore = (collection) => {
     return () => unsub(); // ko ne uporabljamo več se odjavimo
   }, [collection]);
 
-  return { docs, setDocs, loading, setLoading, lastDocs, setLastDocs };
+  return { docs, setDocs, loading, setLoading };
 };
 
 export default useFirestore;

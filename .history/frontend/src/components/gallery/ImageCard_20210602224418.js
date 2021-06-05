@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useFirestore from "../../hooks/useFirestore";
+import { motion } from "framer-motion";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
@@ -71,7 +72,7 @@ function ImageCard({ selectedImg, setSelectedImg }) {
         let documents = [];
         const isCollectionEmpty = collections.size === 0;
         if (!isCollectionEmpty) {
-          //const imgs = collections.docs.map((img) => img.data());
+          const imgs = collections.docs.map((img) => img.data());
           collections.forEach((doc) => {
             documents.push({ ...doc.data(), id: doc.id });
           }); // gre skozi kolekcijo v trenutnem casu

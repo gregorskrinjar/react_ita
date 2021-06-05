@@ -71,7 +71,7 @@ function ImageCard({ selectedImg, setSelectedImg }) {
         let documents = [];
         const isCollectionEmpty = collections.size === 0;
         if (!isCollectionEmpty) {
-          //const imgs = collections.docs.map((img) => img.data());
+          const imgs = collections.docs.map((img) => img.data());
           collections.forEach((doc) => {
             documents.push({ ...doc.data(), id: doc.id });
           }); // gre skozi kolekcijo v trenutnem casu
